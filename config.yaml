@@ -1,0 +1,53 @@
+# these paths can be set by user
+
+savedir: "analysis_results"
+
+# values below not meant to be modified by user
+# we use posix paths, expecting scripts to be run in a docker container
+
+seed: 42
+
+# datasets 
+input_paths:
+  pc_data: "data/ScenicInsAggregated.csv"
+  rt_response_data: "data/SCENICINS_FullDat.csv"
+  pc_prior_data: ["data/Expt1a_Fig.csv", "data/Expt1c_Fig.csv"]
+  hssm_prior_data: "data/Scenic_Params.csv"
+
+# output files from empirical data analysis
+pc_analysis:
+  mcmc_chains: "mcmc_chains_pc.nc"
+  mcmc_summary: "mcmc_summary_pc.nc"
+  posterior_summary: "posterior_summary_pc.csv"
+  posterior_effects: "posterior_effects_pc.csv"
+  prior_plot: "prior_pc.png"
+
+rt_analysis:
+  response_prop_quantiles: "response_proportion_rt_quantiles.csv"
+  response_prop_quantiles_fig: "response_proportion_rt_quantiles.png"
+  quantiles: "rt_quantiles_empirical.csv"
+  effects_plot: "rt_effects_empirical.png"
+
+hssm_analysis:
+  prior_type: "informed"  # use "default" for HSSM defaults
+  prior_data_path: "data/Scenic_Params.csv"
+  mcmc_chains: "mcmc_chaims_hssm.nc"
+  mcmc_summary: "mcmc_summary_hssm.csv"
+  posterior_summary: "posterior_summary_hssm.csv"
+  posterior_effects: "posterior_effects_hssm.csv"
+  prior_plot: "prior"  # completed in prior.get_hssm_prior
+
+postpred_analysis:
+  mcmc_chains: "mcmc_chains_hssm_postpred.nc"
+  rt_response_data: "SCENICINS_FullDat-Postpred.csv"
+  pc_data: "ScenicInsAggregated-HSSM.csv"
+  rt_quantiles: "rt_quantiles_hssm.csv"
+  pc_mcmc_chains: "mcmc_chains_pc_postpred.nc"
+  pc_mcmc_summary: "mcmc_summary_pc_postpred.csv"
+  pc_posterior_summary: "posterior_summary_pc_postpred.csv"
+  pc_posterior_effects: "posterior_effects_pc_postpred.csv"
+  pc_credibility: "credibility_pc.csv"
+  rt_credibility: "credibility_rt_csv"
+  rt_credibility_summary: "credibility_rt_summary.csv"
+  rt_credibility_plot: "credibility_rt.png"
+  rt_effects_plot: "rt_effects_hssm.png"

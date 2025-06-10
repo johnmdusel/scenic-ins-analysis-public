@@ -1,0 +1,4 @@
+pymc==5.22.0
+HSSM==0.2.5
+pytensor
+graphviz
