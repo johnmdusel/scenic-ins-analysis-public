@@ -1,7 +1,7 @@
 # scenic-ins-analysis
 
 A Python project to accompany the paper 
-"Speed versus Accuracy Emphasis Inverts Effects of Stimulus Class on 2AFC Recognition"
+"Speed and Accuracy Instructions Invert Effects of Stimulus Class on 2AFC Recognition"
 by [M. B. Moreland](https://github.com/moreland-hood) 
 and [J. M. Dusel](https://johnmdusel.github.io/).
 
