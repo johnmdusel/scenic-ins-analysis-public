@@ -20,7 +20,7 @@ if __name__ == "__main__":
         pc_data_path=Path(config["input_paths"]["pc_data"]),
         rt_response_data_path=Path(config["input_paths"]["rt_response_data"]),
         prior_data_paths=[Path(p) for p in config["input_paths"]["pc_prior_data"]],
-        prior_plot_name=config["pc_analysis"]["prior_plot"]
+        prior_plot_name=config["pc_analysis"]["prior_plot"],
     )
 
     # mcmc sampling

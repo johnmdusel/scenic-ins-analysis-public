@@ -23,7 +23,7 @@ if __name__ == "__main__":
         prior_type=config["hssm_analysis"]["prior_type"],
         rt_response_data_path=Path(config["input_paths"]["rt_response_data"]),
         prior_data_path=Path(config["hssm_analysis"]["prior_data_path"]),
-        prior_plot_name=config["hssm_analysis"]["prior_plot"]
+        prior_plot_name=config["hssm_analysis"]["prior_plot"],
     )
 
     # mcmc sampling (see README for timing)
@@ -79,7 +79,7 @@ if __name__ == "__main__":
             config["savedir"], config["postpred_analysis"]["rt_response_data"]
         ),
         prior_data_paths=[Path(p) for p in config["input_paths"]["pc_prior_data"]],
-        prior_plot_name=None
+        prior_plot_name=None,
     )
     hssm_pc_analysis.run_mcmc(
         output_mcmc_chains_filename=config["postpred_analysis"]["pc_mcmc_chains"],

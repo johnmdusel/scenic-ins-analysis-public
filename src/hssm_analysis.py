@@ -17,11 +17,11 @@ pytensor.config.blas__ldflags = "-llapack -lblas -lcblas"
 
 
 def declare_model(
-        prior_data_path: Path,
+    prior_data_path: Path,
     rt_response_data_path: Path,
     savedir: Union[Path, None],
     rng: np.random.Generator,
-        prior_plot_name: str
+    prior_plot_name: str,
 ) -> hssm.HSSM:
     """
     Construct HSSM model with an informed prior, using point estimates of
@@ -37,6 +37,8 @@ def declare_model(
         Where to save the analysis outputs.
     rng : np.random.Generator
         Random state, for reproducibility.
+    prior_plot_name : str
+        Filename for plot showing prior distributions.
 
     Returns
     -------
@@ -100,7 +102,7 @@ class HssmAnalysis(McmcAnalysis):
         prior_type: str,
         rt_response_data_path: Path,
         prior_data_path: Path,
-        prior_plot_name: str
+        prior_plot_name: str,
     ):
         super().__init__(savedir, rng)
         self.prior_type = prior_type
@@ -116,7 +118,7 @@ class HssmAnalysis(McmcAnalysis):
             rt_response_data_path=self.rt_response_data_path,
             savedir=self.savedir,
             rng=self.rng,
-            prior_plot_name=self.prior_plot_name
+            prior_plot_name=self.prior_plot_name,
         )
 
         model.sample(

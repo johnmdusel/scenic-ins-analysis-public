@@ -49,7 +49,7 @@ class PcAnalysis(McmcAnalysis):
         pc_data_path: Path,
         rt_response_data_path: Path,
         prior_data_paths: Iterable[Path],
-        prior_plot_name: str | None
+        prior_plot_name: str | None,
     ):
         super().__init__(savedir, rng)
         self.pc_data_path = pc_data_path
@@ -82,36 +82,44 @@ class PcAnalysis(McmcAnalysis):
                 mu=prior_params["a0"]["mu"],
                 sigma=prior_params["a0"]["sigma"],
             )
-            sigma2_a1 = pm.InverseGamma(name="a1Var",
-                                    alpha=prior_params["a1Var"]["alpha"],
-                                    beta=prior_params["a1Var"]["beta"], )
+            sigma2_a1 = pm.InverseGamma(
+                name="a1Var",
+                alpha=prior_params["a1Var"]["alpha"],
+                beta=prior_params["a1Var"]["beta"],
+            )
             a1 = pm.Normal(
                 name="a1",  # Cond (similarity)
                 mu=0,
                 sigma=pm.math.sqrt(sigma2_a1),
                 shape=Nx1Lvl,
             )
-            sigma2_a2 = pm.InverseGamma(name="a2Var",
-                                    alpha=prior_params["a2Var"]["alpha"],
-                                    beta=prior_params["a2Var"]["beta"], )
+            sigma2_a2 = pm.InverseGamma(
+                name="a2Var",
+                alpha=prior_params["a2Var"]["alpha"],
+                beta=prior_params["a2Var"]["beta"],
+            )
             a2 = pm.Normal(
                 name="a2",  # Ins (instructions)
                 mu=0,
                 sigma=pm.math.sqrt(sigma2_a2),
                 shape=Nx2Lvl,
             )
-            sigma2_Subj = pm.InverseGamma(name="aSubjVar",
-                                    alpha=prior_params["aSubjVar"]["alpha"],
-                                    beta=prior_params["aSubjVar"]["beta"], )
+            sigma2_Subj = pm.InverseGamma(
+                name="aSubjVar",
+                alpha=prior_params["aSubjVar"]["alpha"],
+                beta=prior_params["aSubjVar"]["beta"],
+            )
             aSubj = pm.Normal(
                 name="aSubj",
                 mu=0,
                 sigma=pm.math.sqrt(sigma2_Subj),
                 shape=NxSubjLvl,
             )
-            sigma2_a1a2 = pm.InverseGamma(name="a1a2Var",
-                                    alpha=prior_params["a1a2Var"]["alpha"],
-                                    beta=prior_params["a1a2Var"]["beta"], )
+            sigma2_a1a2 = pm.InverseGamma(
+                name="a1a2Var",
+                alpha=prior_params["a1a2Var"]["alpha"],
+                beta=prior_params["a1a2Var"]["beta"],
+            )
             a1a2 = pm.Normal(
                 name="a1a2",
                 mu=0,

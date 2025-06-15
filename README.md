@@ -1,7 +1,7 @@
 # scenic-ins-analysis
 
 A Python project to accompany the paper 
-"Speed and Accuracy Instructions Invert Effects of Stimulus Class on 2AFC Recognition"
+"Speed versus Accuracy Emphasis Inverts Effects of Stimulus Class on 2AFC Recognition"
 by [M. B. Moreland](https://github.com/moreland-hood) 
 and [J. M. Dusel](https://johnmdusel.github.io/).
 
@@ -14,7 +14,7 @@ Our analyses are inspired by similar analyses from
 2. **Bayesian diffusion modeling** using [HSSM](https://lnccbrown.github.io/HSSM/).
 
 Our priors are based on data from a previous related study 
-["Response Time and Encoding Strength: Moderating the Choice Similarity Effect"](https;//foo.bar)
+["Response Time and Encoding Strength: Moderating the Choice Similarity Effect"](https://osf.io/67pnw/files/osfstorage?view_only=632d8f9e3f64450cb23483e7a2a10678)
 by M. B. Moreland and S. E. Clark (2025).
 
 This repository is adapted to the datasets for the experiment reported in our paper.
@@ -110,3 +110,47 @@ To experiment with different parameter settings consider modifying the `'savedir
 Parameter settings have to be changed in the Python scripts themselves. 
 For example, to change the number of MCMC chains or the length of an MCMC chain, 
 look at the `McmcAnalysis` class defined in `src/analysis.py`. 
+
+
+## 3. About the data
+
+### `data/Expt1{a,c}_Fig.csv`
+
+Data from Experiments 1a/1c from by M. B. Moreland and S. E. Clark (2025).
+Follow the OSF link above to read explanations of the columns.
+These files are used in `src.prior.get_pc_analysis_prior` to set the prior for the $p(c)$ analyses.
+See `src.run_empirical_data_analysis` around line 22, `src.run_diffusion_model_analysis` around lines 53, 81,  
+and also `config.yaml`.
+
+### `data/Scenic_Params.csv`
+
+Each row holds a diffusion model parameter estimate 
+based on the results from Experiments 1a/1c of M. B. Moreland and S. E. Clark (2025).
+Column `params` indicates which of $\delta, \alpha, \beta, \tau$ the row is for, 
+and `par` is the value of that parameter.
+We used the columns `par` and `params` in `src.prior.get_hssm_prior` to set priors for the HSSM analysis.
+See `src.run_diffusion_modeling` around lines 25 and 48 and also `config.yaml`.
+
+### `data/SCENICINS_FullDat.csv`
+
+These data are used in the diffusion modeling scripts, passed down from `src.run_diffusion_modeling` around lines 24 and 49.
+They are also used for RT analyses, passed dowm from `src.run_empirical_data_analysis` around lines 21, 45, 57.
+See also `config.yaml`.
+Each row holds the result of a single trial. 
+Column `rt` is the response time in sec on a trial, 
+`response` is response accuracy coded as `1` for correct and `-1` for error , 
+`Cond` is the level of stimulus class coded as `AA` or `AB`,
+`Ins` is the level of instructions coded as `Acc` or `Spd`,
+`participant_id` is the participant ID.
+
+### `data/ScenicInsAggregated.csv`
+
+These data are used in the empirical data analysis scripts, passed down from `src.run_empirical_data_analysis` 
+around line 20 and `src.run_diffusion_modeling` around lines 47 and 100. 
+See also `config.yaml`.
+Each row holds the mean response accuracy `pc` for a participant for a joint level of stimulus class and instructions.
+The mean response accuracy was computed using the `response` values from `data/SCENICINS_FullDat.csv` 
+coded as 1 for correct and 0 for error.
+Column `Cond` is the level of stimulus class coded as `AA` or `AB`,
+`Ins` is the level of instructions coded as `Acc` or `Spd`,
+`participant_id` is the participant ID.

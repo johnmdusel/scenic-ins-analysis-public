@@ -121,17 +121,17 @@ def plot_informative_prior(
     param_name: str,
     dispersion_type: str,
     savedir: Path,
-    filename: str
+    filename: str,
 ):
     assert dispersion_type in ("Variance", "Standard Deviation")
 
-    fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(10,6))
+    fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(10, 6))
     fig.suptitle(f"Informative Prior for GLM Predictor of {param_name}")
 
     ax[0, 0].set_title("Distribution of Values for Intercept Term")
     ax[0, 0].set_xlabel("Value of Intercept Term")
     ax[0, 0].set_ylabel("Density")
-    ax[0, 0].hist(param_values,  bins="auto", density=True, label="Data", color="gray")
+    ax[0, 0].hist(param_values, bins="auto", density=True, label="Data", color="gray")
     ax[0, 0].plot(x_pdf_int, y_pdf_int, label="Prior PDF", c="k")
     ax[0, 0].legend()
 
@@ -145,7 +145,9 @@ def plot_informative_prior(
     ax[1, 0].set_title(f"Samples of {dispersion_type} of Deflection")
     ax[1, 0].set_xlabel(f"Value of {dispersion_type}")
     ax[1, 0].set_ylabel("Density")
-    ax[1, 0].hist(dispersion_samples, bins="auto", density=True, label="Data", color="gray")
+    ax[1, 0].hist(
+        dispersion_samples, bins="auto", density=True, label="Data", color="gray"
+    )
     ax[1, 0].plot(x_pdf_dsp, y_pdf_dsp, label="Prior PDF", c="k")
     ax[1, 0].legend()
 
@@ -164,10 +166,7 @@ def plot_informative_prior(
 
 
 def get_hssm_prior(
-        prior_data_path: Path,
-    savedir: Path,
-    rng: np.random.Generator,
-        prior_plot_name: str
+    prior_data_path: Path, savedir: Path, rng: np.random.Generator, prior_plot_name: str
 ):
     df = pd.read_csv(prior_data_path)
     output = {}
@@ -189,14 +188,12 @@ def get_hssm_prior(
         distrib = PARAM_INFO[param]["dist"]["scipy"]
         if distrib == scipy.stats.gamma:
             shape_guess = pv_mean**2 / pv_std**2
-            scale_guess = pv_std ** 2 / pv_mean
+            scale_guess = pv_std**2 / pv_mean
             shape, scale = fit_ppf(
                 quantiles=QUANTILES,
                 scores=param_quantile_scores,
-                candidate_ppf=lambda x, a, scale: distrib.ppf(
-                    x, a=a, scale=scale
-                ),
-                params_guess=(shape_guess, scale_guess)
+                candidate_ppf=lambda x, a, scale: distrib.ppf(x, a=a, scale=scale),
+                params_guess=(shape_guess, scale_guess),
             )
             intercept_mu = shape * scale
             intercept_sigma = scale * np.sqrt(shape)
@@ -205,13 +202,12 @@ def get_hssm_prior(
         elif distrib == scipy.stats.beta:
             pv_var = np.var(param_values)
             alpha_guess = pv_mean * ((pv_mean * (1 - pv_mean)) / pv_var - 1)
-            beta_guess = (1 - pv_mean) * (
-                        (pv_mean * (1 - pv_mean)) / pv_var - 1)
+            beta_guess = (1 - pv_mean) * ((pv_mean * (1 - pv_mean)) / pv_var - 1)
             alpha, beta = fit_ppf(
                 quantiles=QUANTILES,
                 scores=param_quantile_scores,
                 candidate_ppf=lambda x, a, b: distrib.ppf(x, a=a, b=b),
-                params_guess=(alpha_guess, beta_guess)
+                params_guess=(alpha_guess, beta_guess),
             )
             intercept_mu = alpha / (alpha + beta)
             intercept_sigma = np.sqrt(
@@ -226,16 +222,19 @@ def get_hssm_prior(
                 candidate_ppf=lambda x, loc, scale: distrib.ppf(
                     x, loc=loc, scale=scale
                 ),
-                params_guess=(pv_mean, pv_std)
+                params_guess=(pv_mean, pv_std),
             )
             y_pdf_int = distrib.pdf(x_pdf_int, loc=intercept_mu, scale=intercept_sigma)
-            y_quantiles_int = distrib.ppf(QUANTILES, loc=intercept_mu, scale=intercept_sigma)
+            y_quantiles_int = distrib.ppf(
+                QUANTILES, loc=intercept_mu, scale=intercept_sigma
+            )
         deflections_std_samples = rng.choice(
             a=param_values - pv_mean,
             size=(len(param_values) // 10, N_SAMPLES_DEFLECTION_VAR),
         ).std(axis=0)
-        x_pdf_dsp = np.linspace(deflections_std_samples.min(),
-                                deflections_std_samples.max(), 100)
+        x_pdf_dsp = np.linspace(
+            deflections_std_samples.min(), deflections_std_samples.max(), 100
+        )
         dsp_quantile_scores = np.quantile(deflections_std_samples, QUANTILES)
         invgamma_params_init = inv_gamma_alpha_beta_from_mean_var(
             mean=np.mean(deflections_std_samples),
@@ -249,12 +248,12 @@ def get_hssm_prior(
             ),
             params_guess=tuple(invgamma_params_init.values()),
         )
-        y_pdf_dsp = scipy.stats.invgamma.pdf(x_pdf_dsp,
-                                             a=deflection_shape,
-                                             scale=deflection_scale)
-        y_quantiles_dsp = scipy.stats.invgamma.ppf(QUANTILES,
-                                                   a=deflection_shape,
-                                                   scale=deflection_scale)
+        y_pdf_dsp = scipy.stats.invgamma.pdf(
+            x_pdf_dsp, a=deflection_shape, scale=deflection_scale
+        )
+        y_quantiles_dsp = scipy.stats.invgamma.ppf(
+            QUANTILES, a=deflection_shape, scale=deflection_scale
+        )
         prior_entry.update(
             {
                 "prior": {
@@ -302,7 +301,7 @@ def get_hssm_prior(
             param_name=param,
             dispersion_type="Standard Deviation",
             savedir=savedir,
-            filename=f"{prior_plot_name}_{param}.png"
+            filename=f"{prior_plot_name}_{param}.png",
         )
     output["fixed"] = fixed
     output["include"] = to_be_included
@@ -310,10 +309,10 @@ def get_hssm_prior(
 
 
 def get_pc_analysis_prior(
-        prior_data_paths: Iterable[Path],
-        rng: np.random.Generator,
-        savedir: Path,
-        filename: str | None
+    prior_data_paths: Iterable[Path],
+    rng: np.random.Generator,
+    savedir: Path,
+    filename: str | None,
 ):
     data = load_scenic_data(prior_data_paths)
     pc = data.pc.values - 0.0001
@@ -325,16 +324,14 @@ def get_pc_analysis_prior(
     a0_prior_params = fit_ppf(
         quantiles=QUANTILES,
         scores=quantile_scores_a0,
-        candidate_ppf=lambda x, mu, sigma: scipy.stats.norm.ppf(
-            x, loc=mu, scale=sigma
-        ),
+        candidate_ppf=lambda x, mu, sigma: scipy.stats.norm.ppf(x, loc=mu, scale=sigma),
         params_guess=(pc_linked_mean_overall, pc_linked.std()),
     )
 
     variance_samples = rng.choice(
         a=pc_linked - pc_linked_mean_overall,
         size=(len(pc_linked) // 10, N_SAMPLES_DEFLECTION_VAR),
-        replace=True
+        replace=True,
     ).var(axis=0)
     quantile_scores_deflection_var = np.quantile(variance_samples, QUANTILES)
     deflection_prior_params = fit_ppf(
@@ -343,21 +340,31 @@ def get_pc_analysis_prior(
         candidate_ppf=lambda x, alpha, beta: scipy.stats.invgamma.ppf(
             x, a=alpha, scale=beta
         ),
-        params_guess=tuple(inv_gamma_alpha_beta_from_mean_var(
-            mean=variance_samples.mean(),
-            variance=variance_samples.var()
-        ).values())
+        params_guess=tuple(
+            inv_gamma_alpha_beta_from_mean_var(
+                mean=variance_samples.mean(), variance=variance_samples.var()
+            ).values()
+        ),
     )
 
     params = {
-        "a0": {"mu": np.float32(a0_prior_params[0]),
-               "sigma": np.float32(a0_prior_params[1])},
-        "pc_sigma": {"lower": np.float32(pc_std_overall / 10),
-                     "upper": np.float32(min(0.5,  # sup of std for beta RV
-                                             pc_std_overall * 10))},
-        **{k: {"alpha": np.float32(deflection_prior_params[0]),
-               "beta": np.float32(deflection_prior_params[1])}
-           for k in ("a1Var", "a2Var", "aSubjVar", "a1a2Var")}
+        "a0": {
+            "mu": np.float32(a0_prior_params[0]),
+            "sigma": np.float32(a0_prior_params[1]),
+        },
+        "pc_sigma": {
+            "lower": np.float32(pc_std_overall / 10),
+            "upper": np.float32(
+                min(0.5, pc_std_overall * 10)  # sup of std for beta RV
+            ),
+        },
+        **{
+            k: {
+                "alpha": np.float32(deflection_prior_params[0]),
+                "beta": np.float32(deflection_prior_params[1]),
+            }
+            for k in ("a1Var", "a2Var", "aSubjVar", "a1a2Var")
+        },
     }
 
     if savedir and filename:
@@ -366,31 +373,32 @@ def get_pc_analysis_prior(
         plot_informative_prior(
             param_values=pc_linked,
             x_pdf_int=x_pdf_int,
-            y_pdf_int=scipy.stats.norm.pdf(x_pdf_int,
-                                           loc=params["a0"]["mu"],
-                                           scale=params["a0"]["sigma"]),
+            y_pdf_int=scipy.stats.norm.pdf(
+                x_pdf_int, loc=params["a0"]["mu"], scale=params["a0"]["sigma"]
+            ),
             param_quantile_scores=quantile_scores_a0,
             x_quantiles_int=QUANTILES,
-            y_quantiles_int=scipy.stats.norm.ppf(QUANTILES,
-                                 loc=params["a0"]["mu"],
-                                 scale=params["a0"]["sigma"]),
+            y_quantiles_int=scipy.stats.norm.ppf(
+                QUANTILES, loc=params["a0"]["mu"], scale=params["a0"]["sigma"]
+            ),
             dispersion_samples=variance_samples,
             x_pdf_dsp=x_pdf_dsp,
-            y_pdf_dsp=scipy.stats.invgamma.pdf(x_pdf_dsp,
-                                     a=params["a1Var"]["alpha"],
-                                     scale=params["a1Var"]["beta"]),
+            y_pdf_dsp=scipy.stats.invgamma.pdf(
+                x_pdf_dsp, a=params["a1Var"]["alpha"], scale=params["a1Var"]["beta"]
+            ),
             dsp_quantile_scores=quantile_scores_deflection_var,
             x_quantiles_dsp=QUANTILES,
-            y_quantiles_dsp=scipy.stats.invgamma.ppf(QUANTILES,
-                                                a=params["a1Var"]["alpha"],
-                                                scale=params["a1Var"]["beta"]),
+            y_quantiles_dsp=scipy.stats.invgamma.ppf(
+                QUANTILES, a=params["a1Var"]["alpha"], scale=params["a1Var"]["beta"]
+            ),
             param_name="p(c)",
             dispersion_type="Variance",
             savedir=savedir,
-            filename=filename
+            filename=filename,
         )
 
     return params
+
 
 def fit_ppf(quantiles, scores, candidate_ppf, params_guess):
     fit_params_ppf, _fit_covariances = scipy.optimize.curve_fit(

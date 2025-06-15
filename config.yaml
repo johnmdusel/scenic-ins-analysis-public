@@ -12,7 +12,6 @@ input_paths:
   pc_data: "data/ScenicInsAggregated.csv"
   rt_response_data: "data/SCENICINS_FullDat.csv"
   pc_prior_data: ["data/Expt1a_Fig.csv", "data/Expt1c_Fig.csv"]
-  hssm_prior_data: "data/Scenic_Params.csv"
 
 # output files from empirical data analysis
 pc_analysis:
